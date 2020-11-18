@@ -13,7 +13,18 @@ workflows:
                 keyPassword=$FCI_KEY_PASSWORD
                 keyAlias=$FCI_KEY_ALIAS
                 storeFile=/tmp/keystore.keystore
-                EOF    
+                EOF   
+            - name: Set up debug key.properties
+              script: |
+                keytool -genkeypair \
+                -alias androiddebugkey \
+                -keypass android \
+                -keystore ~/.android/debug.keystore \
+                -storepass android \
+                -dname 'CN=Android Debug,O=Android,C=US' \
+                -keyalg 'RSA' \
+                -keysize 2048 \
+                -validity 10000    
         artifacts:
             - app/build/outputs/**/*.apk
         environment:
