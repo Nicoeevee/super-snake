@@ -10,12 +10,26 @@ workflows:
         FCI_KEY_PASSWORD: Encrypted(Z0FBQUFBQmZ0UmFkcnllbjJUbXFGMFJPbkpJSmxXSzVyZjBlX0kwMjc1eDZvRkM1eTF3Zi1FbEJ5UFN5UXdMZE53MkQ4ZFpISjY4SlEtUTVGVjZpUXlpWDJPZy1sLXR5ZUE9PQ==) # PUT THE ENCRYPTED KEYSTORE ALIAS PASSWORD HERE
         FCI_KEY_ALIAS: Encrypted(Z0FBQUFBQmZ0UlpZZUlRX3BfaV9QRUVBdENQRERMVG5wbFlzSGlMU0pfREZIR2prMEs4UGNTR2QtdU1lVnBDR0xjQ25sLVRtOW9GM20xRVNzbmRhVzUtVUdkOGFFM29vLUE9PQ==) #PUT THE ENCRYPTED KEYSTORE USERNAME HERE
       ndk: r21d
+#    scripts:
+#      - name: Build Android
+#        script: |
+#          export FCI_KEYSTORE_PATH="/tmp/keystore.keystore"
+#          echo $FCI_KEYSTORE | base64 --decode > $FCI_KEYSTORE_PATH
+#          cd android && ./gradlew assembleRelease
     scripts:
-      - name: Build Android
+      - name: Set up local properties
+        script: echo "sdk.dir=$HOME/programs/android-sdk-macosx" > "$FCI_BUILD_DIR/local.properties"
+      - name: Set up key.properties file for code signing
         script: |
-          export FCI_KEYSTORE_PATH="/tmp/keystore.keystore"
-          echo $FCI_KEYSTORE | base64 --decode > $FCI_KEYSTORE_PATH
-          cd android && ./gradlew assembleRelease
+          echo $FCI_KEYSTORE | base64 --decode > /tmp/keystore.keystore
+          cat >> "$FCI_BUILD_DIR/android/key.properties" <<EOF
+          storePassword=$FCI_KEYSTORE_PASSWORD
+          keyPassword=$FCI_KEY_PASSWORD
+          keyAlias=$FCI_KEY_ALIAS
+          storeFile=/tmp/keystore.keystore
+          EOF
+      - name: Build Android app
+        script: ./gradlew assembleRelease
     artifacts:
       - app/build/outputs/**/*.apk
 
