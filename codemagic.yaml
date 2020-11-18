@@ -10,12 +10,6 @@ workflows:
         FCI_KEY_PASSWORD: Encrypted(Z0FBQUFBQmZ0UzU0RWVuamdoV0dQQTdKT0F3cEV3aHh2Yk1VQVpUcExBZlBKaTBqajBDUlhJNmhzeDJrZlpOTmRRZkRfd2xfYUF4NW1XbDNLenEtbGo3d0dvYi00Z3lndFE9PQ==) # PUT THE ENCRYPTED KEYSTORE ALIAS PASSWORD HERE
         FCI_KEY_ALIAS: Encrypted(Z0FBQUFBQmZ0UzVjY0RVY2NXTGEydGpMLVdXSTJxUmNSSEhHUU5PQVhCdF9jV2VfZUpydXg2R0lKMXg2WXR5VWJ6WWdLTUtSSWcydEgwZHVPRnp5SGVjc0hfMlNhUDRUaHc9PQ==) #PUT THE ENCRYPTED KEYSTORE USERNAME HERE
       ndk: r21d
-#    scripts:
-#      - name: Build Android
-#        script: |
-#          export FCI_KEYSTORE_PATH="/tmp/keystore.keystore"
-#          echo $FCI_KEYSTORE | base64 --decode > $FCI_KEYSTORE_PATH
-#          cd android && ./gradlew assembleRelease
     scripts:
       - name: Set up local properties
         script: echo "sdk.dir=$HOME/programs/android-sdk-macosx" > "$FCI_BUILD_DIR/local.properties"
@@ -32,4 +26,16 @@ workflows:
         script: ./gradlew assembleRelease
     artifacts:
       - app/build/outputs/**/*.apk
+    publishing:
+      github_releases:
+        prerelease: false
+        artifact_patterns:
+          - app-release.apk
+          - '*.aab'
+      email:
+        recipients:
+          - nicoeevee@gmail.com
+        notify:
+          success: false     # To not receive a notification when a build succeeds
+          failure: false     # To not receive a notification when a build fails
 
