@@ -1,27 +1,20 @@
 # Check out https://docs.codemagic.io/getting-started/building-a-native-android-app/ for more information
 
 workflows:
-    android-app:
-        name: Android App
-        scripts:
-            - ./gradlew build
-            - name: Set up debug key.properties
-              script: |
-                keytool -genkeypair \
-                -alias androiddebugkey \
-                -keypass android \
-                -keystore ~/.android/debug.keystore \
-                -storepass android \
-                -dname 'CN=Android Debug,O=Android,C=US' \
-                -keyalg 'RSA' \
-                -keysize 2048 \
-                -validity 10000    
-        artifacts:
-            - app/build/outputs/**/*.apk
-        environment:
-            vars:
-                FCI_KEYSTORE: Encrypted(Z0FBQUFBQmZ0UmZ6QS03XzRjZWM2V3Z1bEs0TjN2WTNTWXJDdnRxUzc4XzB0R3dmc0ZBdk92Smg1QnVmaHlpY3MtYk14Y3E2ZDh5cFZlRktHZjREdnBYdkJaaWV1TU5FelE9PQ==) # PUT THE ENCRYPTED KEYSTORE FILE HERE
-                FCI_KEYSTORE_PASSWORD: Encrypted(Z0FBQUFBQmZ0UmFkcnllbjJUbXFGMFJPbkpJSmxXSzVyZjBlX0kwMjc1eDZvRkM1eTF3Zi1FbEJ5UFN5UXdMZE53MkQ4ZFpISjY4SlEtUTVGVjZpUXlpWDJPZy1sLXR5ZUE9PQ==) # PUT THE ENCRYPTED PASSWORD FOR THE KEYSTORE FILE HERE
-                FCI_KEY_PASSWORD: Encrypted(Z0FBQUFBQmZ0UmFkcnllbjJUbXFGMFJPbkpJSmxXSzVyZjBlX0kwMjc1eDZvRkM1eTF3Zi1FbEJ5UFN5UXdMZE53MkQ4ZFpISjY4SlEtUTVGVjZpUXlpWDJPZy1sLXR5ZUE9PQ==) # PUT THE ENCRYPTED KEYSTORE ALIAS PASSWORD HERE
-                FCI_KEY_ALIAS: Encrypted(Z0FBQUFBQmZ0UlpZZUlRX3BfaV9QRUVBdENQRERMVG5wbFlzSGlMU0pfREZIR2prMEs4UGNTR2QtdU1lVnBDR0xjQ25sLVRtOW9GM20xRVNzbmRhVzUtVUdkOGFFM29vLUE9PQ==) #PUT THE ENCRYPTED KEYSTORE USERNAME HERE
-            ndk: r21d 
+  android-app:
+    name: Android App
+    scripts:
+      - name: Build Android
+        script: |
+          export FCI_KEYSTORE_PATH="/tmp/keystore.keystore"
+          echo $FCI_KEYSTORE | base64 --decode > $FCI_KEYSTORE_PATH
+          cd android && ./gradlew assembleRelease
+    artifacts:
+      - app/build/outputs/**/*.apk
+    environment:
+      vars:
+        FCI_KEYSTORE: Encrypted(Z0FBQUFBQmZ0UmZ6QS03XzRjZWM2V3Z1bEs0TjN2WTNTWXJDdnRxUzc4XzB0R3dmc0ZBdk92Smg1QnVmaHlpY3MtYk14Y3E2ZDh5cFZlRktHZjREdnBYdkJaaWV1TU5FelE9PQ==) # PUT THE ENCRYPTED KEYSTORE FILE HERE
+        FCI_KEYSTORE_PASSWORD: Encrypted(Z0FBQUFBQmZ0UmFkcnllbjJUbXFGMFJPbkpJSmxXSzVyZjBlX0kwMjc1eDZvRkM1eTF3Zi1FbEJ5UFN5UXdMZE53MkQ4ZFpISjY4SlEtUTVGVjZpUXlpWDJPZy1sLXR5ZUE9PQ==) # PUT THE ENCRYPTED PASSWORD FOR THE KEYSTORE FILE HERE
+        FCI_KEY_PASSWORD: Encrypted(Z0FBQUFBQmZ0UmFkcnllbjJUbXFGMFJPbkpJSmxXSzVyZjBlX0kwMjc1eDZvRkM1eTF3Zi1FbEJ5UFN5UXdMZE53MkQ4ZFpISjY4SlEtUTVGVjZpUXlpWDJPZy1sLXR5ZUE9PQ==) # PUT THE ENCRYPTED KEYSTORE ALIAS PASSWORD HERE
+        FCI_KEY_ALIAS: Encrypted(Z0FBQUFBQmZ0UlpZZUlRX3BfaV9QRUVBdENQRERMVG5wbFlzSGlMU0pfREZIR2prMEs4UGNTR2QtdU1lVnBDR0xjQ25sLVRtOW9GM20xRVNzbmRhVzUtVUdkOGFFM29vLUE9PQ==) #PUT THE ENCRYPTED KEYSTORE USERNAME HERE
+      ndk: r21d
