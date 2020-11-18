@@ -7,3 +7,5 @@ workflows:
             - ./gradlew build
         artifacts:
             - app/build/outputs/**/*.apk
+    environment:
+        ndk: r21d 
