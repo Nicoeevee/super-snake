@@ -5,15 +5,6 @@ workflows:
         name: Android App
         scripts:
             - ./gradlew build
-            - name: Set up key.properties
-              script: |
-                echo $FCI_KEYSTORE | base64 --decode > /tmp/keystore.keystore
-                cat >> "$FCI_BUILD_DIR/project_directory/android/key.properties" <<EOF
-                storePassword=$FCI_KEYSTORE_PASSWORD
-                keyPassword=$FCI_KEY_PASSWORD
-                keyAlias=$FCI_KEY_ALIAS
-                storeFile=/tmp/keystore.keystore
-                EOF   
             - name: Set up debug key.properties
               script: |
                 keytool -genkeypair \
